@@ -182,10 +182,18 @@ msgid "Chinese (Traditional)"
 msgstr "Chinese (Traditional)"
 
 msgctxt "#33208"
+msgid "Auto Mirror Select"
+msgstr "Auto Mirror Select"
+
+msgctxt "#33209"
 msgid "Auto Source Select"
 msgstr "Auto Source Select"
 
-msgctxt "#33209"
+msgctxt "#33210"
+msgid "Prioritize 1080p"
+msgstr "Prioritize 1080p
+
+msgctxt "#33211"
 msgid "Auto Version Select"
 msgstr "Auto Version Select"
 
@@ -211,3 +219,7 @@ msgstr "Removed from saved list"
 msgctxt "#33304"
 msgid "No search results"
 msgstr "No search results"
+
+msgctxt "#33305"
+msgid "Not available now"
+msgstr "Not available now"

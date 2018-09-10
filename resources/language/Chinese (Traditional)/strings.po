@@ -182,10 +182,18 @@ msgid "Chinese (Traditional)"
 msgstr "繁体中文"
 
 msgctxt "#33208"
+msgid "Auto Mirror Select"
+msgstr "自動鏡像選擇"
+
+msgctxt "#33209"
 msgid "Auto Source Select"
 msgstr "自動選擇來源"
 
-msgctxt "#33209"
+msgctxt "#33210"
+msgid "Prioritize 1080p"
+msgstr "優先 1080p"
+
+msgctxt "#33211"
 msgid "Auto Version Select"
 msgstr "自動版本選"
 
@@ -211,3 +219,7 @@ msgstr "已從我的收藏中刪除"
 msgctxt "#33304"
 msgid "No search results"
 msgstr "沒有搜索結果"
+
+msgctxt "#33305"
+msgid "Not available now"
+msgstr "現在不可用"

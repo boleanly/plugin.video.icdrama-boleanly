@@ -24,13 +24,12 @@ class Icdrama(UrlResolver):
             weburl = self.get_url(host, media_id)
             html   = self.net.http_GET(weburl, headers=self.headers).content
             
-            if '<font color=red>Not available now!</font>' in html:
-                import xbmcaddon
-                cmn.popup(loc.getLocalizedString(33304))
-                return ''
-            else:
-                iframe = BeautifulSoup(html, 'html5lib').find('iframe')
+            iframe = BeautifulSoup(html, 'html5lib').find('iframe')
+            if iframe:
                 return urlresolver.resolve(iframe['src'])
+            else:
+                cmn.popup(loc.getLocalizedString(33305))
+                return ''
                 
         except Exception as e:
             if 'No link selected' in str(e):

@@ -1,13 +1,20 @@
 import re
 import urllib2
 import urllib
+from urlresolver import common
+import xbmcaddon
 
-
-priority_list = [u'Picasaweb 1080p',
-                u'Picasaweb 720p',
-                u'VideoBug',
-                u'Picasaweb 360p',
-                u'Uptobox']
+if xbmcaddon.Addon().getSetting('prioritize_1080p') == 'true':
+    priority_list = [u'Picasaweb 1080p',
+                    u'Picasaweb 720p',
+                    u'VideoBug',
+                    u'Picasaweb 360p',
+                    u'Uptobox']
+else:
+    priority_list = [u'Picasaweb 720p',
+                    u'VideoBug',
+                    u'Picasaweb 360p',
+                    u'Uptobox']
 
 def sort_sources(urls):
     
@@ -29,6 +36,20 @@ def sort_sources(urls):
     
     urls.sort(key = key)
 
+def pick_source(sources):
+    sort_sources(sources)
+    source = ''
+    index = 0
+    
+    if len(sources) >= 1:
+        source = sources[0][1]
+        while not test_stream(source) and index < len(sources):
+            index = index + 1
+            source = sources[index][1]
+        
+        return source
+    else:
+        raise Exception("No video link")
 
 def test_stream(stream_url):
     '''
@@ -39,6 +60,8 @@ def test_stream(stream_url):
     
     From UrlResolver but modified
     '''
+    common.logger.log_debug('Testing Url: %s' % (stream_url))
+    
     try:
         headers = {}
         for item in (stream_url.split('|')[1]).split('&'):
@@ -48,12 +71,13 @@ def test_stream(stream_url):
             headers[header] = urllib.unquote_plus(value)
     except:
         headers = {}
-
+    common.logger.log_debug('Setting Headers on UrlOpen: %s' % (headers))
+    
     try:
         msg = ''
         request = urllib2.Request(stream_url.split('|')[0], headers=headers)
-        #  set urlopen timeout to 15 seconds
-        http_code = urllib2.urlopen(request, timeout=15).getcode()
+        #  set urlopen timeout to 3 seconds
+        http_code = urllib2.urlopen(request, timeout=3).getcode()
     except urllib2.URLError as e:
         if hasattr(e, 'reason'):
             # treat an unhandled url type as success
@@ -70,5 +94,7 @@ def test_stream(stream_url):
     except Exception as e:
         http_code = 601
         msg = str(e)
-
+        
+    if int(http_code) >= 400:
+        common.logger.log_warning('Stream UrlOpen Failed: Url: %s HTTP Code: %s Msg: %s' % (stream_url, http_code, msg))
     return int(http_code) < 400

@@ -9,7 +9,7 @@ import urlresolver
 from urlresolver import common
 from urlresolver.resolver import UrlResolver, ResolverError
 from urlresolver.plugins.lib import jsunpack, helpers
-from lib import streamsort
+from lib import sourceutil
 import xbmcaddon
 
 class Videobug(UrlResolver):
@@ -21,7 +21,6 @@ class Videobug(UrlResolver):
         self.net = common.Net()
         self.headers = {'User-Agent': common.RAND_UA}
 
-        error = common.logger.log_error
     def get_media_url(self, host, media_id):
         url = self.get_url(host, media_id)
         headers = self.headers
@@ -34,12 +33,12 @@ class Videobug(UrlResolver):
             unwrapped_url = response.url
         else:
             streams = self._extract_streams(response)
-            unwrapped_url = streamsort.sort_sources(streams)
             
-            auto_pick = False
+            unwrapped_url = ''
             if xbmcaddon.Addon().getSetting('auto_select_source') == 'true':
-                auto_pick = True
-            unwrapped_url = helpers.pick_source(streams, auto_pick=auto_pick)
+                unwrapped_url = sourceutil.pick_source(streams)
+            else:
+                unwrapped_url = helpers.pick_source(streams)
 
         if ('redirector.googlevideo.com' in unwrapped_url or
             'blogspot.com' in unwrapped_url or
@@ -113,6 +112,7 @@ class Videobug(UrlResolver):
         return None
 
     def _get_post_data(self, html, base_url):
+        error = common.logger.log_error
         results = re.findall(r'<script>.*?VB_TOKEN.*?=.*?"(.+?)";.*?VB_ID.*?=.*?"(.+?)";.*?<\/script>', html)
         if results:
             try:

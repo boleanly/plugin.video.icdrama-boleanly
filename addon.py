@@ -27,10 +27,10 @@ if addon_settings['title_language'] != title_language or addon_settings['languag
 '''
 if __name__ == '__main__':    
     qs = sys.argv[2]
-    print("Icdrama: " + str(sys.argv))
+    #print("Icdrama: " + str(sys.argv))
 
     kargs = dict((k, unquote(v))for k, v in parse_qsl(qs.lstrip('?')))
-    print("Icdrama: " + str(kargs))
+    #print("Icdrama: " + str(kargs))
     
     action_name = kargs.pop('action', 'index') # popped
     

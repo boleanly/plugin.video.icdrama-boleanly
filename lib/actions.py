@@ -240,6 +240,9 @@ def play_mirror(url):
             if 'User-Agent=' not in vidurl:
                 vidurl = vidurl + '|User-Agent=' + urllib.quote(get_ua())
             xbmc.Player().play(vidurl, li)
+            return True
+        else:
+            return False
 
 @_dir_action
 def mirrors(url):
@@ -250,16 +253,18 @@ def _mirrors(url):
     num_mirrors = len(mirrors)
     if num_mirrors > 0:
         di_list = []
-        '''if (xbmcaddon.Addon().getSetting('quick_select') == 'true'):
-            print("Icdrama: " + "Quick Select True!")'''
-        for mirr_label, parts in mirrors:
-            print("Icdrama: " + "(" + str(mirr_label) + ", " + str(parts) + ")")
-            for part_label, part_url in parts:
-                print("Icdrama: " + "(" + str(part_label) + ", " + str(part_url) + ")")
-                label = cleanstring.mirror(mirr_label, part_label)
-                action_url = common.action_url('play_mirror', url=part_url)
-                di_list.append(common.diritem(label, action_url, isfolder=False))
-        return di_list
+        if (xbmcaddon.Addon().getSetting('auto_select_mirror') == 'true'):
+            for mirr_label, parts in mirrors:
+                if "Full" in parts[0][0]:
+                    if play_mirror(parts[0][1]):
+                        return []
+        else:
+            for mirr_label, parts in mirrors:
+                for part_label, part_url in parts:
+                    label = cleanstring.mirror(mirr_label, part_label)
+                    action_url = common.action_url('play_mirror', url=part_url)
+                    di_list.append(common.diritem(label, action_url, isfolder=False))
+            return di_list
     else:
         # if no mirror listing, try to resolve this page directly
         play_mirror(url)
