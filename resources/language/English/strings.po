@@ -191,7 +191,7 @@ msgstr "Auto Source Select"
 
 msgctxt "#33210"
 msgid "Prioritize 1080p"
-msgstr "Prioritize 1080p
+msgstr "Prioritize 1080p"
 
 msgctxt "#33211"
 msgid "Auto Version Select"
