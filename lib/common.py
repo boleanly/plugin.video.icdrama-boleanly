@@ -29,7 +29,7 @@ def webread(url):
     net = Net()
     headers = {'User-Agent': get_ua()}
     
-    if isinstance(url, unicode):
+    if type(url) is unicode:
         url = url.encode('utf8')
     url = quote(url, ':/')
     
@@ -79,7 +79,7 @@ def resolve(url):
     # import the resolvers so that urlresolvers pick them up
     import lib.resolvers
     
-    if isinstance(url, unicode):
+    if type(url) is unicode:
         url = url.encode('utf8')
     url = quote(url, ':/')
 
