@@ -5,7 +5,7 @@ import xbmcplugin
 import xbmcaddon
 from contextlib import contextmanager
 from os.path import abspath, dirname
-from urllib import urlencode
+from urllib import urlencode, quote
 from urlresolver.hmf import HostedMediaFile
 from urlresolver.lib.net import Net, get_ua
 import localizer as lc
@@ -28,6 +28,11 @@ def error(s):
 def webread(url):
     net = Net()
     headers = {'User-Agent': get_ua()}
+    
+    if isinstance(url, unicode):
+        url = url.encode('utf8')
+    url = quote(url, ':/')
+    
     return net.http_GET(url, headers=headers).content
 
 def action_url(action, **action_args):
@@ -73,6 +78,11 @@ def select(heading, options):
 def resolve(url):
     # import the resolvers so that urlresolvers pick them up
     import lib.resolvers
+    
+    if isinstance(url, unicode):
+        url = url.encode('utf8')
+    url = quote(url, ':/')
+
     hmf = HostedMediaFile(url)
     try:
         return hmf.resolve()
