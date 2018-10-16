@@ -1,6 +1,10 @@
 import re
 import urllib2
 import urllib
+import config
+import cPickle as pickle
+from os import makedirs, remove
+from os.path import isfile, dirname, exists
 from urlresolver import common
 import xbmcaddon
 
@@ -15,6 +19,55 @@ else:
                     u'VideoBug',
                     u'Picasaweb 360p',
                     u'Uptobox']
+
+def read_blacklist():
+    list = []
+    
+    if isfile(config.blacklist_file):
+        try:
+            with open(config.blacklist_file, 'rb') as f:
+                list = pickle.load(f)
+        except Exception:
+            # if anything goes wrong, remove file
+            try:
+                remove(config.blacklist_file)
+            except OSError:
+                pass
+            # TODO: log exception
+            list = []
+    
+    return  list
+
+def write_blacklist(list):
+    try:
+        # create directory for file if not exists
+        parent = dirname(config.blacklist_file)
+        if not exists(parent):
+            makedirs(parent)
+
+        with open(config.blacklist_file, 'wb+') as f:
+            pickle.dump(list, f)
+    except Exception:
+        # TODO: log exception
+        pass
+
+def add_blacklist(url):
+    print(blacklist)
+    if blacklist is not None and not check_blacklist(url):
+        print('appending...')
+        print(url)
+        blacklist.append(url)
+        write_blacklist(blacklist)
+    
+def reset_blacklist():
+    blacklist = []
+    write_blacklist(blacklist)
+
+def check_blacklist(url):
+    print('Check blacklist')
+    print(url)
+    print(url in blacklist)
+    return url in blacklist
 
 def sort_sources(urls):
     
@@ -43,7 +96,7 @@ def pick_source(sources):
     
     if len(sources) >= 1:
         source = sources[0][1]
-        while not test_stream(source) and index < len(sources):
+        while (check_blacklist(source) or not test_stream(source)) and index < len(sources):
             index = index + 1
             source = sources[index][1]
         
@@ -98,3 +151,5 @@ def test_stream(stream_url):
     if int(http_code) >= 400:
         common.logger.log_warning('Stream UrlOpen Failed: Url: %s HTTP Code: %s Msg: %s' % (stream_url, http_code, msg))
     return int(http_code) < 400
+
+blacklist = read_blacklist()

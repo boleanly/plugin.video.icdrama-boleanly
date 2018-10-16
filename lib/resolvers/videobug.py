@@ -29,7 +29,8 @@ class Videobug(UrlResolver):
         response = requests.get(url, headers=headers)
         
         unwrapped_url = ''
-        if 'videoredirect.php?' in url: # for current Openload source & other possible redirects
+        
+        if 'redirect.php?'  in url: # for current Openload source & other possible redirects
             unwrapped_url = response.url
         else:
             streams = self._extract_streams(response)
@@ -38,14 +39,15 @@ class Videobug(UrlResolver):
             if xbmcaddon.Addon().getSetting('auto_select_source') == 'true':
                 unwrapped_url = sourceutil.pick_source(streams)
             else:
-                unwrapped_url = helpers.pick_source(streams)
+                unwrapped_url = helpers.pick_source(streams, False)
 
         if ('redirector.googlevideo.com' in unwrapped_url or
             'blogspot.com' in unwrapped_url or
+            'googleusercontent.com' in unwrapped_url or
             'fbcdn.net' in unwrapped_url): # for current Videobug source
             # Kodi can play directly, skip further resolve
             return unwrapped_url
-        
+
         return urlresolver.resolve(unwrapped_url)
 
 

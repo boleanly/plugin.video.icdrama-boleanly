@@ -6,6 +6,7 @@ base_url = 'http://icdrama.se'
 domains = ['icdrama.se']
 cache_file = os.path.join(profile_dir, 'cache.pickle')
 store_file = os.path.join(profile_dir, 'store.pickle')
+blacklist_file = os.path.join(profile_dir, 'blacklist.pickle')
 
 # the trailing forward slashes are necessary
 # without it, page urls will be wrong (icdrama bug)

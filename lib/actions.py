@@ -7,7 +7,7 @@ import xbmcaddon
 from urlresolver.lib.net import get_ua
 from lib import config, common, scrapers, store, cleanstring, cache
 import localizer as lc
-
+import sourceutil
 
 loc = lc.getLocalizer()
 
@@ -163,7 +163,9 @@ def search(url=None):
         heading = loc.getLocalizedString(33301)
         s = common.input(heading)
         if s:
-            url = config.search_url % urllib.quote(s.encode('utf8'))
+            if type(s) is unicode:
+                s = url.encode('utf8')
+            url = config.search_url % urllib.quote(s)
         else:
             return []
     di_list = []
@@ -227,8 +229,13 @@ def remove_saved(eng_name, ori_name, show_url, image):
 
 @_action
 def play_mirror(url):
+    playing = False
+    player = None
+    orig_url = ''
+    
     with common.busy_indicator():
         vidurl = common.resolve(url)
+        orig_url = vidurl
         if vidurl:
             try:
                 title, image = scrapers.title_image(url)
@@ -239,10 +246,38 @@ def play_mirror(url):
             li.setThumbnailImage(image)
             if 'User-Agent=' not in vidurl:
                 vidurl = vidurl + '|User-Agent=' + urllib.quote(get_ua())
-            xbmc.Player().play(vidurl, li)
-            return True
+            
+            # Instantiate own player class
+            player = MyPlayer()
+            
+            player.play(vidurl, li)
+
+            
+            playing = True
+    
+    if player:
+        counter = 0
+        # Checks for a minimum of 60 seconds; keeps script alive for this time
+        while player.alive and counter < 30:
+            counter += 1
+            xbmc.sleep(2000)
+        
+        if not player.hasStarted:
+            common.debug('Icdrama: Player encountered a format that prevented it from starting')
+            # Add to blacklist
+            sourceutil.add_blacklist(orig_url)
+            
+            # Delete to free up reference
+            del player
+            
+            # Try again
+            play_mirror(url)
+            
         else:
-            return False
+            # Delete to free up reference
+            del player
+    
+    return playing
 
 @_dir_action
 def mirrors(url):
@@ -273,3 +308,23 @@ def _mirrors(url):
 @_action
 def refresh():
     common.refresh()
+
+# Player with callbacks to identify bad links
+class MyPlayer(xbmc.Player):
+    def __init__(self):
+        xbmc.Player.__init__(self)
+        self.alive = True
+        self.hasStarted = False
+    
+    # If Kodi cannot plays a link with an unplayable format, this never runs
+    def onPlayBackStarted(self):
+        self.hasStarted = True
+
+    def onPlayBackError(self):
+        self.alive = False
+
+    def onPlayBackStopped(self):
+        self.alive = False
+
+    def onPlayBackEnded(self):
+        self.onPlayBackStopped()
