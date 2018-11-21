@@ -6,6 +6,7 @@ import cPickle as pickle
 from os import makedirs, remove
 from os.path import isfile, dirname, exists
 from urlresolver import common
+import time
 import xbmcaddon
 
 if xbmcaddon.Addon().getSetting('prioritize_1080p') == 'true':
@@ -21,12 +22,15 @@ else:
                     u'Uptobox']
 
 def read_blacklist():
-    list = []
+    list = [[],[]]
     
     if isfile(config.blacklist_file):
         try:
             with open(config.blacklist_file, 'rb') as f:
                 list = pickle.load(f)
+                if list[0] is not None and isinstance(list[0], str):
+                    list = [[],[]]
+                    
         except Exception:
             # if anything goes wrong, remove file
             try:
@@ -34,9 +38,11 @@ def read_blacklist():
             except OSError:
                 pass
             # TODO: log exception
-            list = []
+            list = [[],[]]
+    else:
+        write_blacklist(list)
     
-    return  list
+    return list
 
 def write_blacklist(list):
     try:
@@ -52,22 +58,39 @@ def write_blacklist(list):
         pass
 
 def add_blacklist(url):
-    print(blacklist)
     if blacklist is not None and not check_blacklist(url):
-        print('appending...')
+        print('Icdrama: Appending to blacklist...')
         print(url)
-        blacklist.append(url)
+        blacklist[0].append(url)
+        blacklist[1].append(time.time())
         write_blacklist(blacklist)
     
 def reset_blacklist():
-    blacklist = []
+    blacklist = [[],[]]
     write_blacklist(blacklist)
 
 def check_blacklist(url):
     print('Check blacklist')
     print(url)
-    print(url in blacklist)
-    return url in blacklist
+    
+    index = -1
+    
+    for i in range(len(blacklist[0])):
+        if url == blacklist[0][i]:
+            index = i
+            break
+    
+    if index < 0:
+        return False
+    elif time.time() - blacklist[1][index] > 7 * 86400:
+        print('expired')
+        blacklist[0].pop(index)
+        blacklist[1].pop(index)
+        write_blacklist(blacklist)
+        return False
+    else:
+        print(url in blacklist[0])
+        return True
 
 def sort_sources(urls):
     
