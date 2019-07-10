@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.icdrama-boleanly" version="1.9.8" name="Icdrama (Bol)" provider-name="aznhusband, dumbo0001, boleanly, mugol, General-Meow, cthlo">
+<addon id="plugin.video.icdrama-boleanly" version="1.9.9" name="Icdrama (Bol)" provider-name="aznhusband, dumbo0001, boleanly, mugol, General-Meow, cthlo">
   <requires>
     <import addon="xbmc.python" version="2.1.0"/>
     <import addon="script.module.html5lib" version="0.999.0"/>
     <import addon="script.module.beautifulsoup4" version="4.3.2"/>
     <import addon="script.module.requests" version="2.9.1"/>
-    <import addon="script.module.urlresolver" version="5.0.23"/>
+    <import addon="script.module.urlresolver" version="5.0.28"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>video</provides>

@@ -34,8 +34,8 @@ class Videobug(UrlResolver):
             unwrapped_url = response.url
         else:
             streams = self._extract_streams(response)
+            cmn.debug("Icdrama: Extracted links... " + str(streams))
             
-            unwrapped_url = ''
             if xbmcaddon.Addon().getSetting('auto_select_source') == 'true':
                 unwrapped_url = sourceutil.pick_source(streams)
             else:
