@@ -6,8 +6,8 @@ import xbmcaddon
 from contextlib import contextmanager
 from os.path import abspath, dirname
 from urllib import urlencode, quote
-from urlresolver.hmf import HostedMediaFile
-from urlresolver.lib.net import Net, get_ua
+from resolveurl.hmf import HostedMediaFile
+from resolveurl.lib.net import Net, get_ua
 import localizer as lc
 
 
@@ -76,7 +76,7 @@ def select(heading, options):
     return _dialog.select(heading, options)
 
 def resolve(url):
-    # import the resolvers so that urlresolvers pick them up
+    # import the resolvers so that resolveurl pick them up
     import lib.resolvers
     
     if type(url) is unicode:

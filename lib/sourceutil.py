@@ -5,7 +5,7 @@ import config
 import cPickle as pickle
 from os import makedirs, remove
 from os.path import isfile, dirname, exists
-from urlresolver import common
+from resolveurl import common
 import time
 import xbmcaddon
 

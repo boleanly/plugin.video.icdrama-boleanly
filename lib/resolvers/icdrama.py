@@ -5,10 +5,10 @@ from urlparse import urlparse
 import base64
 import requests
 from bs4 import BeautifulSoup
-import urlresolver
-from urlresolver import common
-from urlresolver.resolver import UrlResolver, ResolverError
-from urlresolver.plugins.lib import helpers
+import resolveurl
+from resolveurl import common
+from resolveurl.resolver import ResolveUrl, ResolverError
+from resolveurl.plugins.lib import helpers
 from lib import sourceutil, common as cmn
 import xbmcaddon
 import lib.localizer as lc
@@ -16,7 +16,7 @@ import lib.localizer as lc
 
 loc = lc.getLocalizer()
 
-class Icdrama(UrlResolver):
+class Icdrama(ResolveUrl):
     name = 'Icdrama'
     domains = [ 'icdrama.se' , 'icdrama.to']
     pattern = '(?://|\.)(icdrama\.se|icdrama\.to)/(.+)'
@@ -54,14 +54,14 @@ class Icdrama(UrlResolver):
                 # Kodi can play directly, skip further resolve
                 return unwrapped_url
             
-            return urlresolver.resolve(unwrapped_url)
+            return resolveurl.resolve(unwrapped_url)
         else:
             try:
                 html   = self.net.http_GET(url, headers=self.headers).content
                 
                 iframe = BeautifulSoup(html, 'html5lib').find('iframe')
                 if iframe:
-                    return urlresolver.resolve(iframe['src'])
+                    return resolveurl.resolve(iframe['src'])
                 else:
                     cmn.popup(loc.getLocalizedString(33305))
                     return ''

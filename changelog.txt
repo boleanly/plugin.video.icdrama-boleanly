@@ -1,3 +1,6 @@
+2.0.0 - 2020-05-16
+ - Replaced urlresolver with resolveurl
+
 1.5.0 - 2017-09-01
  - Add referrer icdrama.se.  Thanks to dumbo0001 for the fix!
 

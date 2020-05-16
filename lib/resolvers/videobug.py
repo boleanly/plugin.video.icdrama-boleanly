@@ -5,14 +5,14 @@ from urlparse import urlparse
 import base64
 import requests
 from bs4 import BeautifulSoup
-import urlresolver
-from urlresolver import common
-from urlresolver.resolver import UrlResolver, ResolverError
-from urlresolver.plugins.lib import jsunpack, helpers
+import resolveurl
+from resolveurl import common
+from resolveurl.resolver import ResolveUrl, ResolverError
+from resolveurl.plugins.lib import jsunpack, helpers
 from lib import sourceutil
 import xbmcaddon
 
-class Videobug(UrlResolver):
+class Videobug(ResolveUrl):
     name = 'Videobug'
     domains = [ 'videobug.se', 'vlist.se']
     pattern = '(?://|\.)(videobug\.se|vlist\.se)/(.+)'
@@ -48,7 +48,7 @@ class Videobug(UrlResolver):
             # Kodi can play directly, skip further resolve
             return unwrapped_url
 
-        return urlresolver.resolve(unwrapped_url)
+        return resolveurl.resolve(unwrapped_url)
 
 
     def get_url(self, host, media_id):

@@ -1,13 +1,13 @@
 import re
 
-import urlresolver
-from urlresolver import common
-from urlresolver.resolver import UrlResolver, ResolverError
-from urlresolver.plugins.lib import helpers
+import resolveurl
+from resolveurl import common
+from resolveurl.resolver import ResolveUrl, ResolverError
+from resolveurl.plugins.lib import helpers
 
 import xbmc
 
-class Hdplay(UrlResolver):
+class Hdplay(ResolveUrl):
     name = 'Hdplay'
     domains = ['hdplay.se']
     pattern = '(?://|\.)(hdplay\.se)/(.+)'
@@ -27,7 +27,7 @@ class Hdplay(UrlResolver):
 
         url = self.get_url(host, media_id)
         
-        #Urlresolver fails to extract header with hls=1
+        #resolveurl fails to extract header with hls=1
         if '?hls=1' in url:
             url = url.replace('?hls=1','') 
         
