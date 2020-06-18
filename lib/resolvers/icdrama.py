@@ -1,7 +1,7 @@
 import re
 import json
 from urllib import unquote
-from urlparse import urlparse
+from urlparse import urlparse, urljoin
 import base64
 import requests
 from bs4 import BeautifulSoup
@@ -18,8 +18,8 @@ loc = lc.getLocalizer()
 
 class Icdrama(ResolveUrl):
     name = 'Icdrama'
-    domains = [ 'icdrama.se' , 'icdrama.to']
-    pattern = '(?://|\.)(icdrama\.se|icdrama\.to)/(.+)'
+    domains = ['icdrama.se' , 'icdrama.to' , 'adrama.to']
+    pattern = '(?://|\.)(icdrama\.se|icdrama\.to|adrama\.to)/(.+)'
 
 
     def __init__(self):
@@ -29,10 +29,11 @@ class Icdrama(ResolveUrl):
 
     def get_media_url(self, host, media_id):
         url = self.get_url(host, media_id)
+        cmn.debug('Icdrama: ' + url)
         
         if 'vidembed' in url or 'vb.icdrama' in url:
             headers = self.headers
-            headers['Referer'] = 'http://icdrama.to'
+            headers['Referer'] = 'http://adrama.to'
 
             response = requests.get(url, headers=headers)
             
@@ -59,9 +60,10 @@ class Icdrama(ResolveUrl):
             try:
                 html   = self.net.http_GET(url, headers=self.headers).content
                 
-                iframe = BeautifulSoup(html, 'html5lib').find('iframe')
+                iframe = BeautifulSoup(html, 'html5lib').find(id='iframeplayer')
                 if iframe:
-                    return resolveurl.resolve(iframe['src'])
+                    iframe_url = urljoin(self.get_url(host,''), iframe['src'])
+                    return resolveurl.resolve(iframe_url)
                 else:
                     cmn.popup(loc.getLocalizedString(33305))
                     return ''
