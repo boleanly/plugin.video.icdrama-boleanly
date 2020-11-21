@@ -18,8 +18,8 @@ loc = lc.getLocalizer()
 
 class Icdrama(ResolveUrl):
     name = 'Icdrama'
-    domains = ['icdrama.se' , 'icdrama.to' , 'adrama.to']
-    pattern = '(?://|\.)(icdrama\.se|icdrama\.to|adrama\.to)/(.+)'
+    domains = ['icdrama.se' , 'icdrama.to' , 'adrama.to', 'hkdrama.to' ]
+    pattern = '(?://|\.)(icdrama\.se|icdrama\.to|adrama\.to|hkdrama\.to)/(.+)'
 
 
     def __init__(self):
